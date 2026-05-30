@@ -23,6 +23,7 @@
 import argparse
 import builtins
 import datetime
+import io
 import json
 import os
 import re
@@ -1079,14 +1080,19 @@ class Processor:
             diff = subprocess.Popen(
                 args,
                 stdout=subprocess.PIPE,
-                **utf8_surrogateescape_text(),
             )
             self.debug_print_git(f"Run: {' '.join(args)}")
 
             # --- stream output ---
-            for out_line in diff.stdout:
-                self.debug_print_git(f"Line {self.reader.line_number}: {out_line}", end="")
-                yield out_line
+            with io.TextIOWrapper(
+                diff.stdout,
+                encoding="utf-8",
+                errors="surrogateescape",
+                newline="\n",
+            ) as diff_stdout:
+                for out_line in diff_stdout:
+                    self.debug_print_git(f"Line {self.reader.line_number}: {out_line}", end="")
+                    yield out_line
 
             diff.wait()
             prev_sha = sha

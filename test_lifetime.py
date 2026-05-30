@@ -524,6 +524,36 @@ class GitHotOutputTests(unittest.TestCase):
         self.assertEqual("fatal: not a git repository", str(raised.exception))
         self.assertEqual(1, run_mock.call_count)
 
+    def test_git_hot_stream_git_history_preserves_embedded_carriage_returns(self):
+        args = parse_main_args(["-q", "HEAD"], prog="git-hot")
+
+        class PopenProc:
+            def __init__(self, data):
+                self.stdout = io.BytesIO(data)
+
+            def wait(self):
+                return 0
+
+        daglp = subprocess.CompletedProcess(
+            ["daglp"],
+            0,
+            stdout="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1\n",
+            stderr="",
+        )
+        diff = PopenProc(b"diff --git a/blob b/blob\nBinary payload\rstill same line\n")
+        with patch.object(Processor, "checked_command_output", return_value="ignored"), patch(
+            "subprocess.run", return_value=daglp
+        ), patch("subprocess.Popen", return_value=diff):
+            lines = list(Processor(args).stream_git_history())
+
+        self.assertEqual(
+            [
+                "diff --git a/blob b/blob\n",
+                "Binary payload\rstill same line\n",
+            ],
+            lines,
+        )
+
     def test_git_hot_reports_line_format_errors(self):
         stdout = io.StringIO()
         stderr = io.StringIO()
