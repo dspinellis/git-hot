@@ -1083,7 +1083,8 @@ class Processor:
             )
             self.debug_print_git(f"Run: {' '.join(args)}")
 
-            # --- stream output ---
+            # Stream output, preserving embedded \r inside a line
+            # while still splitting on \n.
             with io.TextIOWrapper(
                 diff.stdout,
                 encoding="utf-8",
