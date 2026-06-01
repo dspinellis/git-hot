@@ -60,7 +60,7 @@ Git can find `git-hot` and you can invoke it as `git hot`.
 
 ## Usage
 
-Show hot files in the current repository:
+Show hot files (those with often-changing lines) in the current repository:
 
 ```sh
 git hot
@@ -72,7 +72,7 @@ Show hot files at a specific revision:
 git hot HEAD
 ```
 
-Show line-level churn for one file:
+Show line-level churn (times each line was changed) for one file:
 
 ```sh
 git hot -- src/main.py
@@ -107,7 +107,7 @@ Use `--color always` or `--color never` to control color output.  Automatic
 coloring can rank lines by `churn`, `age`, or `lifetime`:
 
 ```sh
-git hot --color always --color-domain age -- src/main.py
+git hot --color-domain age -- src/main.py
 ```
 
 ## Formatting

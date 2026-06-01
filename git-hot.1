@@ -192,15 +192,26 @@ The median age, in rounded integer days, of the file's live lines at the
 analyzed revision.
 .TP 30
 .B path
-The repository path.
-For a selected
-.IR path ,
-the default output is equivalent to:
+The file's path in the repository.
+.PP
+.SS Line Metrics
+The default line-by-line output for a selected
+.I path
+or for a full reconstruction in the specified
+.I directory
+is equivalent to the format
 .PP
 .EX
 {churn:>{5}d}  {line}
 .EE
 .PP
+The columns are:
+.TP 30
+.B churn
+The number of changes recorded for the specific line.
+.TP 30
+.B line
+The source code line at the latest revision.
 Each output line represents one live reconstructed line from the selected file.
 .SH FORMAT STRINGS
 .B git hot
