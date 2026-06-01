@@ -19,7 +19,7 @@ LC_ALL := C
 
 RUSTFLAGS=-O
 LIFETIME=src/git_hot/lifetime.py
-GIT_HOT=PYTHONPATH=src python3 -c 'import sys; from git_hot.lifetime import main; sys.argv[0] = "git-hot"; sys.exit(main())'
+GIT_HOT=PATH=$(CURDIR):$$PATH PYTHONPATH=src python3 -c 'import sys; from git_hot.lifetime import main; sys.argv[0] = "git-hot"; sys.exit(main())'
 
 all: daglp
 
