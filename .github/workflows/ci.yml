@@ -48,6 +48,10 @@ jobs:
       - name: Run tests
         run: uv run python -m unittest discover -s . -p 'test*.py'
 
+      - name: Run Makefile integration tests
+        if: runner.os == 'Linux' && matrix.python-version == '3.12'
+        run: make test-python
+
       - name: Build source distribution
         run: uv build --sdist
 

@@ -156,6 +156,16 @@ uv run python -m unittest discover -s . -p 'test*.py'
 uv run --group dev ruff check .
 ```
 
+Run the full Python integration test suite on Unix-like systems with:
+
+```sh
+make test-python
+```
+
+This rule exercises the Git history fixtures, shell scripts, `daglp`, and the
+Python command-line interface.  It depends on Bash and standard Unix tools such
+as `sort` and `diff`, so CI runs it only on Linux.
+
 Build a source distribution locally with:
 
 ```sh
