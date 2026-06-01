@@ -35,7 +35,7 @@ test-python: daglp
 	git clone ./fixtures/code-lifetime-test-branch.git
 	./sync-test-branches.sh
 	TOOL='$(LIFETIME) --color never' ./runtest.sh
-	GIT_DIR=fixtures/code-lifetime-test.git ./git-hot | diff - fixtures/metrics.out
+	GIT_DIR=fixtures/code-lifetime-test.git python3 git-hot | diff - fixtures/metrics.out
 	rm -rf code-lifetime-test code-lifetime-test-branch diff.diff \
 	commit-tree.txt commit-daglp.txt RECONSTRUCTION growth.txt churn
 
