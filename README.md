@@ -179,7 +179,9 @@ pipx uninstall git-hot
 pipx install .
 ```
 
-Platform wheels are built in CI through `cibuildwheel`.
+Platform wheels are built in CI through `cibuildwheel`, which smoke-tests the
+installed `git-hot` and `daglp` commands and runs the portable Python unit tests
+against each wheel on Linux, Windows, and macOS.
 
 
 ## Research Tools

@@ -67,7 +67,8 @@ ignore = ["E741"]
 [tool.cibuildwheel]
 build = "cp310-*"
 skip = "*-musllinux_*"
-test-command = "git-hot --help && python -c \"import subprocess; subprocess.run(['daglp'], input=b'', check=True)\""
+test-sources = ["lifetime.py", "test_lifetime.py"]
+test-command = "git-hot --help && python -c \"import subprocess; subprocess.run(['daglp'], input=b'', check=True)\" && python -m unittest test_lifetime"
 
 [tool.cibuildwheel.linux.environment]
 PATH = "$HOME/.cargo/bin:$PATH"

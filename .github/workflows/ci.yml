@@ -96,6 +96,8 @@ jobs:
             README.md \
             git-hot.1 \
             daglp.1 \
+            lifetime.py \
+            test_lifetime.py \
             pyproject.toml \
             setup.py \
             uv.lock
