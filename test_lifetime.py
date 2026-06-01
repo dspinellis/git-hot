@@ -381,6 +381,34 @@ class GitHotOutputTests(unittest.TestCase):
             self.TestProcessor(args).run()
         self.assertEqual("    0  one\n    1  two changed\n", stdout.getvalue())
 
+    def test_git_hot_dir_reconstruction_reuses_repo_populations(self):
+        with tempfile.TemporaryDirectory(dir=os.getcwd()) as tmpdir:
+            output_dir = os.path.join(tmpdir, "out")
+            args = parse_main_args(["-q", "--dir", output_dir], prog="git-hot")
+            processor = self.TestProcessor(args)
+            processor.timestamp = "100"
+            processor.flt = {
+                "a.txt": FileDetails(
+                    "a.txt",
+                    [LineDetails("one\n", birth_timestamp=10, birth_hash="a" * 40)],
+                ),
+                "b.txt": FileDetails(
+                    "b.txt",
+                    [LineDetails("two\n", birth_timestamp=20, birth_hash="b" * 40)],
+                ),
+            }
+
+            with patch.object(
+                processor,
+                "repo_line_populations",
+                wraps=processor.repo_line_populations,
+            ) as repo_line_populations:
+                processor.reconstruct()
+
+            self.assertEqual(1, repo_line_populations.call_count)
+            self.assertTrue(os.path.exists(os.path.join(output_dir, "a.txt")))
+            self.assertTrue(os.path.exists(os.path.join(output_dir, "b.txt")))
+
     def test_git_hot_reports_percentage_progress(self):
         args = parse_main_args(["HEAD"], prog="git-hot")
         stdout = io.StringIO()

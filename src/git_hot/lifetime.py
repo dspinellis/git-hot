@@ -537,11 +537,22 @@ def quartile_rank(value, population):
     if isinstance(value, (list, tuple)):
         raise TypeError("quartile rank requires a scalar value")
     values = require_flat_values(population)
+    return rank_by_quartiles(value, quartile_cut_points(values))
+
+
+def quartile_cut_points(values):
+    """Return cached cut points for assigning quartile ranks."""
     if not values:
-        return 1
+        return None
     if len(values) == 1:
+        return None
+    return statistics.quantiles(values, n=4, method="inclusive")
+
+
+def rank_by_quartiles(value, quartiles):
+    """Rank value using precomputed quartile cut points."""
+    if quartiles is None:
         return 1
-    quartiles = statistics.quantiles(values, n=4, method="inclusive")
     if value <= quartiles[0]:
         return 1
     if value <= quartiles[1]:
@@ -571,6 +582,10 @@ class LineFormatter:
         self.file_line_churns = []
         self.file_line_ages = []
         self.file_line_change_lifetimes = []
+        self.file_line_churn_quartiles = None
+        self.file_line_age_quartiles = None
+        self.file_line_lifetime_medians = []
+        self.file_line_lifetime_quartiles = None
         self.repo_line_churns = []
         self.repo_line_ages = []
         self.repo_line_change_lifetimes = []
@@ -594,18 +609,22 @@ class LineFormatter:
         self.file_line_churns = [line.churn_count for line in details.lines]
         self.file_line_ages = [current_timestamp - line.birth_timestamp for line in details.lines]
         self.file_line_change_lifetimes = [list(line.change_lifetimes) for line in details.lines]
+        self.file_line_churn_quartiles = quartile_cut_points(self.file_line_churns)
+        self.file_line_age_quartiles = quartile_cut_points(self.file_line_ages)
+        self.file_line_lifetime_medians = list(map(median, self.file_line_change_lifetimes))
+        self.file_line_lifetime_quartiles = quartile_cut_points(self.file_line_lifetime_medians)
         self.bind_repo(repo_line_churns, repo_line_ages, repo_line_change_lifetimes)
 
     def default_quartile(self, line, age):
         """Color a reconstructed line against the current file's populations."""
         if self.color_domain == "age":
-            return quartile_rank(age, self.file_line_ages)
+            return rank_by_quartiles(age, self.file_line_age_quartiles)
         if self.color_domain == "lifetime":
-            return quartile_rank(
+            return rank_by_quartiles(
                 median(line.change_lifetimes),
-                list(map(median, self.file_line_change_lifetimes)),
+                self.file_line_lifetime_quartiles,
             )
-        return quartile_rank(line.churn_count, self.file_line_churns)
+        return rank_by_quartiles(line.churn_count, self.file_line_churn_quartiles)
 
     def format(self, line):
         age = (
@@ -1495,6 +1514,8 @@ class Processor:
     def reconstruct(self):
         base_dir = self.args.churn_dir or "RECONSTRUCTION"
         shutil.rmtree(base_dir, ignore_errors=True)
+        current_timestamp = int(self.timestamp) if self.timestamp is not None else 0
+        repo_populations = self.repo_line_populations(current_timestamp)
         for path, details in self.flt.items():
             if path == "/dev/null":
                 continue
@@ -1511,15 +1532,14 @@ class Processor:
                 errors="surrogateescape",
                 newline="",
             ) as out:
-                self.write_reconstructed_lines(out, details)
+                self.write_reconstructed_lines(out, details, current_timestamp, repo_populations)
 
-    def write_reconstructed_lines(self, out, details):
-        current_timestamp = int(self.timestamp) if self.timestamp is not None else 0
-        (
-            repo_line_churns,
-            repo_line_ages,
-            repo_line_change_lifetimes,
-        ) = self.repo_line_populations(current_timestamp)
+    def write_reconstructed_lines(self, out, details, current_timestamp=None, repo_populations=None):
+        if current_timestamp is None:
+            current_timestamp = int(self.timestamp) if self.timestamp is not None else 0
+        if repo_populations is None:
+            repo_populations = self.repo_line_populations(current_timestamp)
+        repo_line_churns, repo_line_ages, repo_line_change_lifetimes = repo_populations
         self.line_formatter.bind_file(
             details,
             current_timestamp,
