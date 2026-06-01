@@ -21,6 +21,9 @@ The package installs two commands:
 
 ## Command installation
 
+The _git-hot_ command (is hosted on PyPI)[https://pypi.org/project/git-hot/].
+It can therefore be easily installed with a Python package manager.
+
 ### As an individual user
 
 ```sh
