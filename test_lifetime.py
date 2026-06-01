@@ -26,6 +26,8 @@ from unittest.mock import patch
 from lifetime import (
     ESCAPED_QUOTE,
     Color,
+    FileDetails,
+    LineDetails,
     ProcessingError,
     Processor,
     hide_escaped_quotes,
@@ -66,6 +68,10 @@ index 1111111..2222222 100644
 
 
 class ConvertedFunctionTests(unittest.TestCase):
+    def test_detail_records_use_slots(self):
+        self.assertFalse(hasattr(FileDetails("f"), "__dict__"))
+        self.assertFalse(hasattr(LineDetails("line\n"), "__dict__"))
+
     def test_line_details_existing_cases(self):
         cases = [
             ("xx", "2 0 0 0 0 0 0 0 0 0 0"),

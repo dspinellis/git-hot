@@ -90,6 +90,8 @@ class ProcessingError(Exception):
 class FileDetails:
     """Details tracked for a file while processing the diff stream."""
 
+    __slots__ = ("binary", "change_lifetimes", "lines", "path")
+
     def __init__(self, path, lines=None, binary=False, change_lifetimes=None):
         self.path = path
         self.lines = list(lines) if lines is not None else []
@@ -107,6 +109,27 @@ class FileDetails:
 
 class LineDetails:
     """Details about a line's content, lifetime metadata, and composition."""
+
+    __slots__ = (
+        "access",
+        "array",
+        "assignment",
+        "birth_hash",
+        "birth_timestamp",
+        "bracket",
+        "change_lifetimes",
+        "churn_count",
+        "comma",
+        "comment",
+        "content",
+        "content_history",
+        "delta",
+        "length",
+        "logical",
+        "scope",
+        "startspace",
+        "string",
+    )
 
     def __init__(
         self,
