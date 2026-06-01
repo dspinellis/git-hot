@@ -421,6 +421,24 @@ class GitHotOutputTests(unittest.TestCase):
             stderr.getvalue(),
         )
 
+    def test_git_hot_dir_reports_reconstruction_progress(self):
+        with tempfile.TemporaryDirectory(dir=os.getcwd()) as tmpdir:
+            output_dir = os.path.join(tmpdir, "out")
+            args = parse_main_args(["--dir", output_dir], prog="git-hot")
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            self.TestProcessor.diff_stream = TEST_DIFF_STREAM
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                self.TestProcessor(args).run()
+        self.assertEqual("", stdout.getvalue())
+        self.assertEqual(
+            "\rProcessing commits:  50% (1/2)"
+            "\rProcessing commits: 100% (2/2)"
+            "\rReconstructing files:   0% (0/1)"
+            "\rReconstructing files: 100% (1/1)\n",
+            stderr.getvalue(),
+        )
+
     def test_git_hot_path_uses_custom_format(self):
         args = parse_main_args(
             ["-q", "--format", "{days(age)} {isodate(birthtime)} {hash[:7]} {line}", "--", "f"],

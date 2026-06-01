@@ -952,6 +952,19 @@ class Processor:
             print(", done.", file=sys.stderr, flush=True)
             self.git_hot_progress_active = False
 
+    def report_file_progress(self, completed, total):
+        """Report file reconstruction progress."""
+        if self.args.quiet or self.debug_reconstruction or not self.git_hot_cli:
+            return
+        percent = 100 if total == 0 else int((completed * 100) / total)
+        print(
+            f"\rReconstructing files: {percent:3d}% ({completed}/{total})",
+            end="\n" if completed == total else "",
+            file=sys.stderr,
+            flush=True,
+        )
+        self.git_hot_progress_active = completed != total
+
     def checked_command_output(self, args):
         """Return command stdout, raising ProcessingError with stderr on failure."""
         self.debug_print_git(f"Run: {' '.join(args)}")
@@ -995,16 +1008,19 @@ class Processor:
                     self.bail_out(f"Invalid state {state}")
 
             self.process_last_commit()
-            self.report_progress_done()
             if self.json_metrics_mode():
+                self.report_progress_done()
                 self.dump_json_metrics()
             elif self.debug_reconstruction or self.args.churn_dir:
                 self.reconstruct()
             elif self.dump_selected_file_details():
+                self.report_progress_done()
                 pass
             elif self.args.file_metrics:
+                self.report_progress_done()
                 self.dump_file_metrics()
             else:
+                self.report_progress_done()
                 self.dump_alive()
         finally:
             self.reader.close()
@@ -1516,11 +1532,13 @@ class Processor:
         shutil.rmtree(base_dir, ignore_errors=True)
         current_timestamp = int(self.timestamp) if self.timestamp is not None else 0
         repo_populations = self.repo_line_populations(current_timestamp)
-        for path, details in self.flt.items():
-            if path == "/dev/null":
-                continue
-            if details is None:
-                continue
+        files = [
+            (path, details)
+            for path, details in self.flt.items()
+            if path != "/dev/null" and details is not None
+        ]
+        self.report_file_progress(0, len(files))
+        for index, (path, details) in enumerate(files, start=1):
             full_path = os.path.join(base_dir, *path.split("/"))
             directory = os.path.dirname(full_path)
             if directory:
@@ -1533,6 +1551,7 @@ class Processor:
                 newline="",
             ) as out:
                 self.write_reconstructed_lines(out, details, current_timestamp, repo_populations)
+            self.report_file_progress(index, len(files))
 
     def write_reconstructed_lines(self, out, details, current_timestamp=None, repo_populations=None):
         if current_timestamp is None:
