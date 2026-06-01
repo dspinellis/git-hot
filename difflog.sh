@@ -29,10 +29,12 @@ shift
 # Default 8k ulimit core dumps
 ulimit -s 65536
 
+DAGLP=${DAGLP:-daglp}
+
 # Obtain a list of commit timestamp parents in topological order
 git log --pretty=tformat:'%H %at %P' --topo-order $BRANCH -- |
 # Provide the graph's longest path
-daglp |
+"$DAGLP" |
 while read sha ts ; do
   if [ "$prev" ] ; then
     echo "commit $sha $ts"

@@ -27,10 +27,10 @@ daglp: ./src/git_hot/daglp.rs
 
 test-python: daglp
 	rm -rf code-lifetime-test code-lifetime-test-branch
-	(cd fixtures/code-lifetime-test.git/ ; ../../difflog.sh master) | $(LIFETIME) -t 2>/dev/null | sort | diff <(sort fixtures/tokens.out)  -
-	(cd fixtures/code-lifetime-test.git/ ; ../../difflog.sh master) | $(LIFETIME) -l 2>/dev/null | sort | diff <(sort fixtures/line-contents.out)  -
+	(cd fixtures/code-lifetime-test.git/ ; DAGLP=../../daglp ../../difflog.sh master) | $(LIFETIME) -t 2>/dev/null | sort | diff <(sort fixtures/tokens.out)  -
+	(cd fixtures/code-lifetime-test.git/ ; DAGLP=../../daglp ../../difflog.sh master) | $(LIFETIME) -l 2>/dev/null | sort | diff <(sort fixtures/line-contents.out)  -
 	git clone ./fixtures/code-lifetime-test.git
-	cd code-lifetime-test && ../difflog.sh master | python3 ../$(LIFETIME) --color never -C ../churn
+	cd code-lifetime-test && DAGLP=../daglp ../difflog.sh master | python3 ../$(LIFETIME) --color never -C ../churn
 	diff -r fixtures/churn.ok/ churn/
 	git clone ./fixtures/code-lifetime-test-branch.git
 	./sync-test-branches.sh

@@ -23,6 +23,7 @@ set -E
 trap '[ "$?" -ne 77 ] || exit 77' ERR
 
 export TOOLDIR=$(pwd)
+export DAGLP="$TOOLDIR/daglp"
 
 compare()
 {
