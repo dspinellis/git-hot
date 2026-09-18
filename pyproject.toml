@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "git-hot"
-version = "0.10"
+version = "0.11.0"
 description = "Git extension for reporting source code line lifetime and churn"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -24,8 +24,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/dspinellis/code-lifetime"
-Issues = "https://github.com/dspinellis/code-lifetime/issues"
+Homepage = "https://github.com/dspinellis/git-hot"
+Issues = "https://github.com/dspinellis/git-hot/issues"
 
 [dependency-groups]
 dev = [
