@@ -197,6 +197,11 @@ reproducibility and experimentation, but the installable package exposes only
 
 For historical and research context, see [lifetime-tools.md](https://github.com/dspinellis/git-hot/blob/master/lifetime-tools.md).
 
+## Related publications
+* Diomidis Spinellis. Tracking code churn with Git. IEEE Software, 43(5):17–21, September 2026. [doi:10.1109/ms.2026.3703113](https://doi.org/10.1109/ms.2026.3703113)
+* Saleha Muzammil, Mughees Ur Rehman, Zoe Kotti, and Diomidis Spinellis. Source code hotspots: A diagnostic method for quality issues. In Proceedings of the 23rd International Conference on Mining Software Repositories, MSR '26, pages 1–13. ACM, April 2026. [doi:10.1145/3793302.3793334](https://doi.org/10.1109/ms.2026.3703113)
+* Diomidis Spinellis, Panos Louridas, and Maria Kechagia. Software evolution: The lifetime of fine-grained elements. PeerJ Computer Science, 7:e372, February 2021. [doi:10.7717/peerj-cs.372](https://doi.org/10.7717/peerj-cs.372)
+
 ## License
 
 `git-hot` is distributed under the Apache License 2.0.  See `LICENSE`.
