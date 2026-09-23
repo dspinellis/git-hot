@@ -5,7 +5,7 @@ the current lines or files in a repository are.
 It derives line lifetime and churn information from Git history,
 then highlights files and lines that have changed often or recently.
 
-Install the package and run it as either:
+[Install](https://pypi.org/project/git-hot/) the package and run it as either:
 
 ```sh
 git hot
@@ -21,7 +21,7 @@ The package installs two commands:
 
 ## Command installation
 
-The _git-hot_ command (is hosted on PyPI)[https://pypi.org/project/git-hot/].
+The _git-hot_ command is [hosted on PyPI](https://pypi.org/project/git-hot/).
 It can therefore be easily installed with a Python package manager.
 
 ### As an individual user
