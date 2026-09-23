@@ -4,6 +4,13 @@
 the current lines or files in a repository are.
 It derives line lifetime and churn information from Git history,
 then highlights files and lines that have changed often or recently.
+The following output examples show
+the exploration of hot files and a hot line in the Linux kernel source code.
+
+<p>
+<img src="images/files.png" alt="Hot files in the Linux kernel" width="50%">
+<img src="images/lines.png" alt="Hot line in a Linux kernel file" width="40%">
+</p>
 
 [Install](https://pypi.org/project/git-hot/) the package and run it as either:
 
